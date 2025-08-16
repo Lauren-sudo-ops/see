@@ -609,10 +609,15 @@ const StudyPlanView: React.FC<StudyPlanViewProps> = ({ studyPlans, tasks, fixedC
                     Busy day!
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    ({formatTime(todaysPlan.plannedTasks.filter(session => {
-                      const sessionStatus = checkSessionStatus(session, todaysPlan.date);
-                      return sessionStatus !== 'missed' && session.status !== 'skipped';
-                    }).reduce((sum, session) => sum + session.allocatedHours, 0))} / {formatTime(settings.dailyAvailableHours)} study hours)
+                    ({(() => {
+                      const taskHours = todaysPlan.plannedTasks.filter(session => {
+                        const sessionStatus = checkSessionStatus(session, todaysPlan.date);
+                        return sessionStatus !== 'missed' && session.status !== 'skipped';
+                      }).reduce((sum, session) => sum + session.allocatedHours, 0);
+                      const committedHours = calculateCommittedHoursForDate(todaysPlan.date, fixedCommitments);
+                      const totalHours = taskHours + committedHours;
+                      return `${formatTime(totalHours)} / ${formatTime(settings.dailyAvailableHours)} total hours`;
+                    })()})
                   </span>
                   <span className="text-xs text-blue-500 dark:text-blue-400" title="Buffer time between sessions is not counted in study hours">
                     + buffer time
