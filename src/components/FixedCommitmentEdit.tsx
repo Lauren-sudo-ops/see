@@ -22,6 +22,7 @@ const FixedCommitmentEdit: React.FC<FixedCommitmentEditProps> = ({ commitment, e
     location: commitment.location || '',
     description: commitment.description || '',
     isAllDay: commitment.isAllDay || false,
+    countsTowardDailyHours: commitment.countsTowardDailyHours || false,
     dateRange: {
       startDate: commitment.dateRange?.startDate || '',
       endDate: commitment.dateRange?.endDate || ''
