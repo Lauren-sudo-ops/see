@@ -354,7 +354,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdateTask, onDeleteTask, 
     }
 
     return true;
-  }, [editFormData, today, userSettings]);
+  }, [editFormData, today, userSettings, calculateSessionBasedTotal]);
 
   const saveEdit = () => {
     if (editingTaskId && isEditFormValid) {
