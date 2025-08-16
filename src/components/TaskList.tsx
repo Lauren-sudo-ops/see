@@ -342,7 +342,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onUpdateTask, onDeleteTask, 
 
     if (!editFormData.impact) return false;
     if (editFormData.deadline && editFormData.deadline < today) return false;
-    if (editFormData.startDate && editFormData.startDate < today) return false;
+    // Start date validation removed for editing tasks - tasks are already created
 
     // Custom category validation (1-50 characters)
     if (editFormData.category === 'Custom...' && (!editFormData.customCategory?.trim() || editFormData.customCategory.trim().length > 50)) return false;
