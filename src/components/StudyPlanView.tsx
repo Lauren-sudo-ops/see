@@ -25,6 +25,60 @@ if (typeof window !== 'undefined') {
   }
 }
 
+// Helper function to calculate committed hours for a specific date
+const calculateCommittedHoursForDate = (date: string, commitments: FixedCommitment[]): number => {
+  const targetDate = new Date(date);
+  const dayOfWeek = targetDate.getDay();
+
+  let totalCommittedHours = 0;
+
+  commitments.forEach(commitment => {
+    // Only count commitments that count toward daily hours
+    if (!commitment.countsTowardDailyHours) return;
+
+    // Skip all-day events (they don't have specific duration)
+    if (commitment.isAllDay || !commitment.startTime || !commitment.endTime) return;
+
+    let shouldInclude = false;
+
+    if (commitment.recurring) {
+      // For recurring commitments, check if this day of week is included
+      if (commitment.daysOfWeek.includes(dayOfWeek)) {
+        // Check if the date falls within the date range (if specified)
+        if (commitment.dateRange) {
+          const startDate = new Date(commitment.dateRange.startDate);
+          const endDate = new Date(commitment.dateRange.endDate);
+          if (targetDate >= startDate && targetDate <= endDate) {
+            shouldInclude = true;
+          }
+        } else {
+          // No date range specified, so it's active
+          shouldInclude = true;
+        }
+      }
+    } else {
+      // For one-time commitments, check if this date is in the specific dates
+      if (commitment.specificDates?.includes(date)) {
+        shouldInclude = true;
+      }
+    }
+
+    if (shouldInclude) {
+      // Calculate duration in hours
+      const [startHour, startMin] = commitment.startTime.split(':').map(Number);
+      const [endHour, endMin] = commitment.endTime.split(':').map(Number);
+      const startMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
+      const durationMinutes = endMinutes - startMinutes;
+      const durationHours = durationMinutes / 60;
+
+      totalCommittedHours += durationHours;
+    }
+  });
+
+  return totalCommittedHours;
+};
+
 const StudyPlanView: React.FC<StudyPlanViewProps> = ({ studyPlans, tasks, fixedCommitments, onSelectTask, onGenerateStudyPlan, onUndoSessionDone, onSkipSession, settings, onAddFixedCommitment, onRefreshStudyPlan, onReshuffleStudyPlan, onUpdateTask }) => {
   const [notificationMessage, setNotificationMessage] = useState<string | null>(null);
   const [] = useState<{ taskTitle: string; unscheduledMinutes: number } | null>(null);
