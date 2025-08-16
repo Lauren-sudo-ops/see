@@ -543,6 +543,49 @@ const StudyPlanView: React.FC<StudyPlanViewProps> = ({ studyPlans, tasks, fixedC
 
 
       
+      {/* Daily Capacity Overview */}
+      {studyPlans.length > 0 && todaysPlan && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-2">
+                <Clock className="text-blue-600 dark:text-blue-400" size={20} />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800 dark:text-white">Today's Capacity</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Your planned work breakdown</p>
+              </div>
+            </div>
+            <div className="text-right">
+              {(() => {
+                const taskHours = todaysPlan.plannedTasks.filter(session => {
+                  const sessionStatus = checkSessionStatus(session, todaysPlan.date);
+                  return sessionStatus !== 'missed' && session.status !== 'skipped';
+                }).reduce((sum, session) => sum + session.allocatedHours, 0);
+                const committedHours = calculateCommittedHoursForDate(todaysPlan.date, fixedCommitments);
+                const totalPlannedHours = taskHours + committedHours;
+                const remainingHours = Math.max(0, settings.dailyAvailableHours - totalPlannedHours);
+
+                return (
+                  <div className="space-y-1">
+                    <div className="text-lg font-bold text-gray-800 dark:text-white">
+                      {formatTime(totalPlannedHours)} / {formatTime(settings.dailyAvailableHours)}
+                    </div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 space-y-0.5">
+                      <div>📝 Tasks: {formatTime(taskHours)}</div>
+                      {committedHours > 0 && <div>📊 Commitments: {formatTime(committedHours)}</div>}
+                      <div className={remainingHours > 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}>
+                        {remainingHours > 0 ? `⚡ Available: ${formatTime(remainingHours)}` : "⚠️ Overloaded"}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Today's Study Plan */}
       {!isTodayWorkDay ? (
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6 dark:bg-gray-900 dark:shadow-gray-900">
