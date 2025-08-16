@@ -2767,7 +2767,7 @@ export const redistributeAfterTaskDeletion = (
       date,
       plannedTasks: [],
       totalStudyHours: 0,
-      availableHours: settings.dailyAvailableHours
+      availableHours: availableHoursAfterCommitments
     });
   });
 
