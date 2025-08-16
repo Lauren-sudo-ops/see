@@ -21,6 +21,7 @@ const FixedCommitmentInput: React.FC<FixedCommitmentInputProps> = ({ onAddCommit
     location: '',
     description: '',
     isAllDay: false,
+    countsTowardDailyHours: false,
     dateRange: {
       startDate: '',
       endDate: ''
@@ -129,6 +130,7 @@ const FixedCommitmentInput: React.FC<FixedCommitmentInputProps> = ({ onAddCommit
       location: '',
       description: '',
       isAllDay: false,
+      countsTowardDailyHours: false,
       dateRange: {
         startDate: '',
         endDate: ''
