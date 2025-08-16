@@ -2054,13 +2054,17 @@ export const generateNewStudyPlan = (
       }
     });
     // Sort available days to maintain order
-    availableDays.sort();
+  availableDays.sort();
   }
 
   const studyPlans: StudyPlan[] = [];
   const dailyRemainingHours: { [date: string]: number } = {};
   availableDays.forEach(date => {
-    dailyRemainingHours[date] = settings.dailyAvailableHours;
+    // Calculate committed hours for this date that count toward daily hours
+    const committedHours = calculateCommittedHoursForDate(date, fixedCommitments);
+    const availableHoursAfterCommitments = Math.max(0, settings.dailyAvailableHours - committedHours);
+
+    dailyRemainingHours[date] = availableHoursAfterCommitments;
     studyPlans.push({
       id: `plan-${date}`,
       date,
